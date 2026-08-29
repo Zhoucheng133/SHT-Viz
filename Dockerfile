@@ -7,7 +7,7 @@ COPY frontend/ ./
 RUN yarn build
 
 # Build stage 2: Python backend and serving the combined app
-FROM python:3.11-slim
+FROM python:3.12-bullseye
 WORKDIR /app
 
 # Install Python dependencies
