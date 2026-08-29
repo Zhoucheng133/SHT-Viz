@@ -24,7 +24,7 @@ def getDay(year: int, month: int, day: int):
     except ValueError:
         return {
             "ok": False,
-            "msg": "无效日期"
+            "msg": "Invalid Date"
         }
     return cht.getDataByDay(target_day)
 
@@ -43,7 +43,7 @@ def getMaxByDat(year: int, month: int, day: int):
     except ValueError:
         return {
             "ok": False,
-            "msg": "无效日期"
+            "msg": "Invalid Date"
         }
     return cht.getMaxByDay(target_day)
 
@@ -54,20 +54,20 @@ def getMinByDat(year: int, month: int, day: int):
     except ValueError:
         return {
             "ok": False,
-            "msg": "无效日期"
+            "msg": "Invalid Date"
         }
     return cht.getMinByDay(target_day)
 
 @app.get("/get/recent/temperature")
 def getRecentTemperature(day: Optional[str] = None):
     if day is None:
-        return {"msg": "参数 day 未提供"}
+        return {"msg": "Parameter 'day' is not provided."}
     return cht.getRecentTemperature(day)
 
 @app.get("/get/recent/humidity")
 def getRecentHumidity(day: Optional[str] = None):
     if day is None:
-        return {"msg": "参数 day 未提供"}
+        return {"msg": "Parameter 'day' is not provided."}
     return cht.getRecentHumidity(day)
 
 app.mount("/", StaticFiles(directory=DIST_DIR, html=True), name="static")
