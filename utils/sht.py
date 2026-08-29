@@ -26,7 +26,7 @@ class ShtSensor:
         threading.Thread(target=self.loop, daemon=True).start()
     
     def loop(self):
-        print("Loop START")
+        # print("Loop START")
         while True:
             now = datetime.now()
             next_minute = (now.minute // 10 + 1) * 10
@@ -35,7 +35,7 @@ class ShtSensor:
             else:
                 next_time = now.replace(minute=next_minute, second=0, microsecond=0)
             sleep_seconds = (next_time - now).total_seconds()
-            print(f"Wait {sleep_seconds:.2f} Seconds...")
+            # print(f"Wait {sleep_seconds:.2f} Seconds...")
             time.sleep(sleep_seconds)
             try:
                 self.mainLoop()
