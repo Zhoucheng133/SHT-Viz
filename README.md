@@ -42,13 +42,13 @@ sudo docker run -d \
 --restart always \
 --name sht \
 -p <port>:8080 \
--v <database_port>:/app/db \
+-v <database_path>:/app/db \
 --device /dev/i2c-1 \
 -e SHT30_ADDR=0x44 \
 zhouc1230/sht:latest
 ```
 
-*Replace `<port>` with your desired host port (e.g., `8080`), `<database_port>` with your host path for data storage, and `-e SHT30_ADDR=0x44` to customize the sensor's I2C address (defaults to `0x44` if not specified).*
+*Replace `<port>` with your desired host port (e.g., `8080`), `<database_path>` with your host path for data storage, and `-e SHT30_ADDR=0x44` to customize the sensor's I2C address (defaults to `0x44` if not specified).*
 
 ## Updating
 
@@ -62,7 +62,7 @@ sudo docker run -d \
 --restart always \
 --name sht \
 -p <port>:8080 \
--v <database_port>:/app/db \
+-v <database_path>:/app/db \
 --device /dev/i2c-1 \
 -e SHT30_ADDR=0x44 \
 zhouc1230/sht:latest
