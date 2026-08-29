@@ -1,27 +1,27 @@
-FROM python:3.12-bullseye
+# Build stage 1: Build the frontend
+FROM node:20-alpine AS frontend-builder
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/yarn.lock ./
+RUN yarn install --frozen-lockfile
+COPY frontend/ ./
+RUN yarn build
 
+# Build stage 2: Python backend and serving the combined app
+FROM python:3.11-slim
 WORKDIR /app
 
-COPY app.py ./
-COPY dist ./dist
-COPY utils ./utils
-COPY requirements.txt ./
-
-RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
-RUN sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
-
-ENV TZ=Asia/Shanghai
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        i2c-tools \
-        libi2c-dev \
-        make \
-        gcc \
-        && rm -rf /var/lib/apt/lists/*
-
-RUN pip config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
-
+# Install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080", "--log-level", "critical"]
+# Copy backend code
+COPY . .
+
+# Copy built frontend assets from stage 1 to dist/
+COPY --from=frontend-builder /app/frontend/dist /app/dist
+
+# Expose port
+EXPOSE 8000
+
+# Start the application with uvicorn
+CMD ["uvicorn", "app.py:app", "--host", "0.0.0.0", "--port", "8000"]
