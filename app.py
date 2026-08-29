@@ -13,11 +13,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIST_DIR = os.path.join(BASE_DIR, "dist")
 # print(DIST_DIR)
 
-@app.get("/get")
+@app.get("/api/get")
 def getData():
     return cht.getSensorData()
 
-@app.get("/get/day")
+@app.get("/api/get/day")
 def getDay(year: int, month: int, day: int):
     try:
         target_day = datetime(year, month, day)
@@ -28,15 +28,15 @@ def getDay(year: int, month: int, day: int):
         }
     return cht.getDataByDay(target_day)
 
-@app.get("/get/max")
+@app.get("/api/get/max")
 def getMaxTemp():
     return cht.getMaxTemp()
 
-@app.get("/get/min")
+@app.get("/api/get/min")
 def getMinTemp():
     return cht.getMinTemp()
 
-@app.get("/get/maxByDay")
+@app.get("/api/get/maxByDay")
 def getMaxByDat(year: int, month: int, day: int):
     try:
         target_day = datetime(year, month, day)
@@ -47,7 +47,7 @@ def getMaxByDat(year: int, month: int, day: int):
         }
     return cht.getMaxByDay(target_day)
 
-@app.get("/get/minByDay")
+@app.get("/api/get/minByDay")
 def getMinByDat(year: int, month: int, day: int):
     try:
         target_day = datetime(year, month, day)
@@ -58,13 +58,13 @@ def getMinByDat(year: int, month: int, day: int):
         }
     return cht.getMinByDay(target_day)
 
-@app.get("/get/recent/temperature")
+@app.get("/api/get/recent/temperature")
 def getRecentTemperature(day: Optional[str] = None):
     if day is None:
         return {"msg": "Parameter 'day' is not provided."}
     return cht.getRecentTemperature(day)
 
-@app.get("/get/recent/humidity")
+@app.get("/api/get/recent/humidity")
 def getRecentHumidity(day: Optional[str] = None):
     if day is None:
         return {"msg": "Parameter 'day' is not provided."}
