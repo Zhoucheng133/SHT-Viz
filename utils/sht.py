@@ -36,12 +36,19 @@ class ShtSensor:
             sleep_seconds = (next_time - now).total_seconds()
             # print(f"等待 {sleep_seconds:.2f} 秒执行下一次数据收集...")
             time.sleep(sleep_seconds)
-            self.mainLoop()
+            try:
+                self.mainLoop()
+            except Exception as e:
+                print(f"[mainLoop error] {e}")
 
     def mainLoop(self):
+        sensorData = self.getSensorData()
+        if sensorData["temperature"] is None or sensorData["humidity"] is None:
+            print("[mainLoop] Sensor read failed, skip this round.")
+            return
+
         conn = sqlite3.connect('db/data.db')
         c = conn.cursor()
-        sensorData = self.getSensorData()
         now = datetime.now().replace(second=0, microsecond=0)
         c.execute(
             "INSERT INTO temperature_log (timestamp, temperature, humidity) VALUES (?, ?, ?)",
@@ -56,20 +63,24 @@ class ShtSensor:
         conn.close()
 
     def read_sht30(self):
-        bus.write_i2c_block_data(SHT30_ADDR, 0x2C, [0x06])
-        time.sleep(0.05)
-        
-        data = bus.read_i2c_block_data(SHT30_ADDR, 0, 6)
-        if len(data) != 6:
+        try:
+            bus.write_i2c_block_data(SHT30_ADDR, 0x2C, [0x06])
+            time.sleep(0.05)
+            
+            data = bus.read_i2c_block_data(SHT30_ADDR, 0, 6)
+            if len(data) != 6:
+                return None, None
+
+            temp_raw = (data[0] << 8) | data[1]
+            temperature = -45 + (175 * temp_raw) / 65535.0
+
+            humi_raw = (data[3] << 8) | data[4]
+            humidity = 100 * humi_raw / 65535.0
+
+            return round(temperature, 2), round(humidity, 2)
+        except OSError as e:
+            print(f"[read_sht30] I2C error: {e}")
             return None, None
-        
-        temp_raw = (data[0] << 8) | data[1]
-        temperature = -45 + (175 * temp_raw) / 65535.0
-        
-        humi_raw = (data[3] << 8) | data[4]
-        humidity = 100 * humi_raw / 65535.0
-        
-        return round(temperature, 2), round(humidity, 2)
 
     def getSensorData(self):
         temp, humi = self.read_sht30()
