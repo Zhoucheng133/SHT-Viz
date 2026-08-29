@@ -20,6 +20,8 @@ COPY . .
 # Copy built frontend assets from stage 1 to dist/
 COPY --from=frontend-builder /app/frontend/dist /app/dist
 
+ENV TZ=Asia/Shanghai
+
 # Expose port
 EXPOSE 8000
 
