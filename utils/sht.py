@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
+import os
 import sqlite3
 import threading
 import time
 import smbus
 
 bus = smbus.SMBus(1)
-SHT30_ADDR = 0x44
+SHT30_ADDR = int(os.environ.get("SHT30_ADDR", "0x44"), 0)
 
 class ShtSensor:
     def __init__(self):
