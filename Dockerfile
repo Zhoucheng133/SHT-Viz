@@ -24,4 +24,4 @@ COPY --from=frontend-builder /app/frontend/dist /app/dist
 EXPOSE 8000
 
 # Start the application with uvicorn
-CMD ["uvicorn", "app.py:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080", "--log-level", "critical"]
